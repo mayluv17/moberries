@@ -4,30 +4,31 @@ import { clientsData, clientsType } from "./utils/data";
 import "./App.css";
 
 function App() {
-  const [data, setData] = useState<clientsType[]>(clientsData);
-  const [toggleEditForm, setToggleEditForm] = useState<boolean>(false);
-  const [userEditId, setUserEditId] = useState<number>(0);
-  const [editInput, setEditInput] = useState<clientsType>({
-    id: 0,
+  const defaultData: clientsType = {
+    id: Math.floor(Math.random() * 1000),
     name: "",
     date: "",
     email: "",
     status: "ACTIVE",
-  });
+  };
+  const [data, setData] = useState<clientsType[]>(clientsData);
+  const [toggleForm, setToggleForm] = useState<boolean>(false);
+  const [isNewUser, setIsNewUser] = useState<boolean>(false);
+  const [userEditId, setUserEditId] = useState<number>(0);
+  const [editInput, setEditInput] = useState<clientsType>(defaultData);
 
   const toggleEditor = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    setIsNewUser(false);
     const { dataset } = e.currentTarget;
     const userId = Number(dataset.userid);
     setUserEditId(userId);
-    setToggleEditForm(true);
+    setToggleForm(true);
     const findClient = data.find((client) => client.id === userId);
     findClient && setEditInput(findClient);
   };
 
-  const handleEditForm = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleForm = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
     setEditInput((prevFormData) => {
       return {
@@ -37,14 +38,34 @@ function App() {
     });
   };
 
-  const handleEditFormSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleFormSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (toggleEditForm) {
-      const filterCurrentData: clientsType[] = data.filter(
-        (client) => client.id !== userEditId
-      );
-      setData([...filterCurrentData, editInput]);
+    if (toggleForm && !isNewUser) {
+      submitEditedClient();
     }
+    if (toggleForm && isNewUser) {
+      submitNewClient();
+    }
+  };
+
+  const handleAddNewClient = () => {
+    setEditInput(defaultData);
+    setIsNewUser(true);
+    setToggleForm(true);
+  };
+
+  const submitEditedClient = () => {
+    const filterCurrentData: clientsType[] = data.filter(
+      (client) => client.id !== userEditId
+    );
+    setData([...filterCurrentData, editInput]);
+    setToggleForm(false);
+  };
+
+  const submitNewClient = () => {
+    setData([...data, { ...editInput, id: Math.floor(Math.random() * 1000) }]);
+    setIsNewUser(false);
+    setToggleForm(false);
   };
 
   return (
@@ -79,9 +100,10 @@ function App() {
         ))}
       </table>
       <br />
+      <button onClick={handleAddNewClient}>Add user</button>
       <hr />
 
-      {toggleEditForm && (
+      {toggleForm && (
         <div>
           <form role="edit">
             <label htmlFor="name"> Name </label>
@@ -89,7 +111,7 @@ function App() {
               id="name"
               name="name"
               value={editInput?.name}
-              onChange={(e) => handleEditForm(e)}
+              onChange={(e) => handleForm(e)}
               type="text"
             ></input>
             <label htmlFor="email"> Email </label>
@@ -97,7 +119,7 @@ function App() {
               id="email"
               name="email"
               value={editInput?.email}
-              onChange={(e) => handleEditForm(e)}
+              onChange={(e) => handleForm(e)}
               type="text"
             ></input>
             <label htmlFor="birthday"> Birthday </label>
@@ -105,7 +127,7 @@ function App() {
               id="birthday"
               name="date"
               value={editInput?.date}
-              onChange={(e) => handleEditForm(e)}
+              onChange={(e) => handleForm(e)}
               type="date"
             ></input>
             <label htmlFor="status"> Status </label>
@@ -113,13 +135,13 @@ function App() {
               id="status"
               name="status"
               value={editInput?.status}
-              onChange={(e) => handleEditForm(e)}
+              onChange={(e) => handleForm(e)}
             >
               <option value={"ACTIVE"}>ACTIVE</option>
               <option value={"PENDING"}>PENDING</option>
               <option value={"BLOCKED"}>BLOCKED</option>
             </select>
-            <button onClick={handleEditFormSubmit}>Save edits</button>
+            <button onClick={handleFormSubmit}>Save</button>
           </form>
         </div>
       )}
