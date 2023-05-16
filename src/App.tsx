@@ -1,7 +1,7 @@
-import React, { useState, MouseEvent, FormEvent, ChangeEvent } from "react";
+import { useState, MouseEvent, ChangeEvent } from "react";
 import { clientsData, clientsType } from "./utils/data";
-
 import "./App.css";
+import Client from "./components/Client";
 
 function App() {
   const defaultData: clientsType = {
@@ -16,6 +16,11 @@ function App() {
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   const [userEditId, setUserEditId] = useState<number>(0);
   const [editInput, setEditInput] = useState<clientsType>(defaultData);
+  const [searchInput, setSearchInput] = useState("");
+  const [isResultFound, setIsResultFound] = useState<boolean>(true);
+  const [searcResult, setSearchResult] = useState<clientsType[] | undefined>(
+    []
+  );
 
   const toggleEditor = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -67,45 +72,46 @@ function App() {
     setIsNewUser(false);
     setToggleForm(false);
   };
-
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchQuery = e.target.value;
+    setSearchInput(searchQuery);
+    if (searchQuery !== "") {
+      const searchResult: clientsType | undefined = data.find(
+        (client) => client.email === searchQuery
+      );
+      if (searchResult) {
+        // setData([searchResult]);
+        setSearchResult([searchResult]);
+        setIsResultFound(true);
+      } else {
+        setIsResultFound(false);
+      }
+    } else {
+      setSearchResult([]);
+      setIsResultFound(true);
+    }
+  };
   return (
     <div className="App">
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        {data.map((client) => (
-          <tr key={client.id}>
-            <td>{client.id}</td>
-            <td>{client.name}</td>
-            <td>{client.email}</td>
-            <td>{client.status}</td>
-            <td>
-              <a
-                data-userid={client.id}
-                onClick={(e) => {
-                  toggleEditor(e);
-                }}
-              >
-                edit
-              </a>
-            </td>
-          </tr>
-        ))}
-      </table>
+      <Client
+        data={searchInput !== "" ? searcResult : data}
+        isResultFound={isResultFound}
+        toggleEditor={toggleEditor}
+      />
       <br />
       <button onClick={handleAddNewClient}>Add user</button>
+      <hr />
+      <input
+        placeholder="search Client"
+        type="search"
+        onChange={handleSearch}
+        value={searchInput}
+      />
       <hr />
 
       {toggleForm && (
         <div>
-          <form role="edit">
+          <form>
             <label htmlFor="name"> Name </label>
             <input
               id="name"
