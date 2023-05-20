@@ -1,4 +1,4 @@
-import { useState, MouseEvent, ChangeEvent } from "react";
+import { MouseEvent } from "react";
 import { clientsType } from "../utils/data";
 
 interface clientProp {

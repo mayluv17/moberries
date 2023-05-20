@@ -18,12 +18,7 @@ function App() {
   const [editInput, setEditInput] = useState<clientsType>(defaultData);
   const [searchInput, setSearchInput] = useState("");
   const [isResultFound, setIsResultFound] = useState<boolean>(true);
-  // const [searcResult, setSearchResult] = useState<clientsType[] | undefined>(
-  //   []
-  // );
-  const [currentData, setCurrentData] = useState<clientsType[] | undefined>(
-    clientsData
-  );
+  const [currentData, setCurrentData] = useState<clientsType[]>(clientsData);
 
   const toggleEditor = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -100,24 +95,55 @@ function App() {
 
   const handleFilterResult = (e: ChangeEvent<HTMLSelectElement>) => {
     const status = e.currentTarget.value;
-    if (searchInput !== "") {
-      const sortedData = currentData?.filter(
-        (result) => result.status === status
-      );
-      setCurrentData(sortedData);
+    if (status === "none") {
+      setCurrentData(data);
     } else {
-      const sortedData = data?.filter((result) => result.status === status);
-      setCurrentData(sortedData);
+      const filteredData = data.filter((result) => result.status === status);
+      setCurrentData(filteredData);
     }
   };
+
+  const handleSort = (e: ChangeEvent<HTMLSelectElement>) => {
+    const sortBy = e.currentTarget.value;
+
+    if (sortBy === "none") return setCurrentData(data);
+
+    const existing = [...currentData];
+    let sortedData: clientsType[] = [];
+
+    if (sortBy === "a-z") {
+      sortedData = existing.sort(function (a, b) {
+        return a.name
+          .toLocaleLowerCase()
+          .localeCompare(b.name.toLocaleLowerCase());
+      });
+    }
+
+    if (sortBy === "z-a") {
+      sortedData = existing.sort(function (a, b) {
+        return b.name
+          .toLocaleLowerCase()
+          .localeCompare(a.name.toLocaleLowerCase());
+      });
+    }
+    setCurrentData(sortedData);
+  };
+
   return (
     <div className="App">
-      <label> Filter by:</label>
-      <select onChange={(e) => handleFilterResult(e)}>
+      <label htmlFor="filter"> Filter by:</label>
+      <select name="filter" onChange={(e) => handleFilterResult(e)}>
         <option>none</option>
         <option>ACTIVE</option>
         <option>PENDING</option>
         <option>BLOCK</option>
+      </select>
+
+      <label htmlFor="sort"> Sort by:</label>
+      <select name="sort" onChange={(e) => handleSort(e)}>
+        <option value="none">none</option>
+        <option value="a-z">A to Z</option>
+        <option value="z-a">Z to A</option>
       </select>
       <Client
         data={currentData}
