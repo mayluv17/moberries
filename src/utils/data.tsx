@@ -26,7 +26,7 @@ export const clientsData: clientsType[] = [
     id: 3,
     name: "Mark Silvester",
     date: "1972-12-23",
-    email: "johndoe@gmail.com",
+    email: "marksilver@gmail.com",
     status: "PENDING",
   },
 ];

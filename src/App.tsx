@@ -18,8 +18,11 @@ function App() {
   const [editInput, setEditInput] = useState<clientsType>(defaultData);
   const [searchInput, setSearchInput] = useState("");
   const [isResultFound, setIsResultFound] = useState<boolean>(true);
-  const [searcResult, setSearchResult] = useState<clientsType[] | undefined>(
-    []
+  // const [searcResult, setSearchResult] = useState<clientsType[] | undefined>(
+  //   []
+  // );
+  const [currentData, setCurrentData] = useState<clientsType[] | undefined>(
+    clientsData
   );
 
   const toggleEditor = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -64,14 +67,18 @@ function App() {
       (client) => client.id !== userEditId
     );
     setData([...filterCurrentData, editInput]);
+    setCurrentData([...filterCurrentData, editInput]);
     setToggleForm(false);
   };
 
   const submitNewClient = () => {
-    setData([...data, { ...editInput, id: Math.floor(Math.random() * 1000) }]);
+    const userId = Math.floor(Math.random() * 1000);
+    setData([...data, { ...editInput, id: userId }]);
+    setCurrentData([...data, { ...editInput, id: userId }]);
     setIsNewUser(false);
     setToggleForm(false);
   };
+
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const searchQuery = e.target.value;
     setSearchInput(searchQuery);
@@ -80,21 +87,40 @@ function App() {
         (client) => client.email === searchQuery
       );
       if (searchResult) {
-        // setData([searchResult]);
-        setSearchResult([searchResult]);
+        setCurrentData([searchResult]);
         setIsResultFound(true);
       } else {
         setIsResultFound(false);
       }
     } else {
-      setSearchResult([]);
+      setCurrentData([]);
       setIsResultFound(true);
+    }
+  };
+
+  const handleFilterResult = (e: ChangeEvent<HTMLSelectElement>) => {
+    const status = e.currentTarget.value;
+    if (searchInput !== "") {
+      const sortedData = currentData?.filter(
+        (result) => result.status === status
+      );
+      setCurrentData(sortedData);
+    } else {
+      const sortedData = data?.filter((result) => result.status === status);
+      setCurrentData(sortedData);
     }
   };
   return (
     <div className="App">
+      <label> Filter by:</label>
+      <select onChange={(e) => handleFilterResult(e)}>
+        <option>none</option>
+        <option>ACTIVE</option>
+        <option>PENDING</option>
+        <option>BLOCK</option>
+      </select>
       <Client
-        data={searchInput !== "" ? searcResult : data}
+        data={currentData}
         isResultFound={isResultFound}
         toggleEditor={toggleEditor}
       />

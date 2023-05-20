@@ -9,8 +9,8 @@ interface clientProp {
 
 function Client({ data, isResultFound, toggleEditor }: clientProp) {
   return (
-    <div>
-      <table border={1}>
+    <>
+      <table className="styled-table" border={1}>
         <thead>
           <tr>
             <th>id</th>
@@ -26,28 +26,30 @@ function Client({ data, isResultFound, toggleEditor }: clientProp) {
           </tr>
         ) : (
           data?.map((client) => (
-            <tr key={client.id}>
-              <td>{client.id}</td>
-              <td>{client.name}</td>
-              <td>{client.email}</td>
-              <td>{client.status}</td>
-              <td>
-                <a
-                  role="button"
-                  href="#"
-                  data-userid={client.id}
-                  onClick={(e) => {
-                    toggleEditor(e);
-                  }}
-                >
-                  edit
-                </a>
-              </td>
-            </tr>
+            <tbody>
+              <tr key={client.id}>
+                <td>{client.id}</td>
+                <td>{client.name}</td>
+                <td>{client.email}</td>
+                <td>{client.status}</td>
+                <td>
+                  <a
+                    role="button"
+                    href="#"
+                    data-userid={client.id}
+                    onClick={(e) => {
+                      toggleEditor(e);
+                    }}
+                  >
+                    edit
+                  </a>
+                </td>
+              </tr>
+            </tbody>
           ))
         )}
       </table>
-    </div>
+    </>
   );
 }
 
