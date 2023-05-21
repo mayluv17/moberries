@@ -1,12 +1,4 @@
-//(ACTIVE, PENDING, BLOCKED)
-
-export interface clientsType {
-  id: number;
-  name: string;
-  date: string;
-  email: string;
-  status: "ACTIVE" | "PENDING" | "BLOCKED";
-}
+import { clientsType } from "../types/clientProps";
 export const clientsData: clientsType[] = [
   {
     id: 1,

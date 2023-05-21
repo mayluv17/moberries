@@ -1,13 +1,13 @@
+import React, { ReactElement } from "react";
 import { MouseEvent } from "react";
-import { clientsType } from "../utils/data";
+import { clientsType } from "../types/clientProps";
 
 interface clientProp {
   data: clientsType[] | undefined;
-  isResultFound: boolean;
-  toggleEditor: (e: MouseEvent<HTMLAnchorElement>) => void;
+  toggleEditor: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-function Client({ data, isResultFound, toggleEditor }: clientProp) {
+const Client: React.FC<clientProp> = ({ data, toggleEditor }): ReactElement => {
   return (
     <>
       <table className="styled-table" border={1}>
@@ -20,37 +20,35 @@ function Client({ data, isResultFound, toggleEditor }: clientProp) {
             <th>Action</th>
           </tr>
         </thead>
-        {!isResultFound ? (
-          <tr>
-            <td>"No result found"</td>
-          </tr>
-        ) : (
-          data?.map((client) => (
-            <tbody>
+        <tbody>
+          {!data?.length ? (
+            <tr>
+              <td colSpan={5}>"No result found"</td>
+            </tr>
+          ) : (
+            data?.map((client, key) => (
               <tr key={client.id}>
-                <td>{client.id}</td>
+                <td>{key + 1}</td>
                 <td>{client.name}</td>
                 <td>{client.email}</td>
                 <td>{client.status}</td>
                 <td>
-                  <a
-                    role="button"
-                    href="#"
+                  <button
                     data-userid={client.id}
                     onClick={(e) => {
                       toggleEditor(e);
                     }}
                   >
                     edit
-                  </a>
+                  </button>
                 </td>
               </tr>
-            </tbody>
-          ))
-        )}
+            ))
+          )}
+        </tbody>
       </table>
     </>
   );
-}
+};
 
 export default Client;
