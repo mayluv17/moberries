@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mayluv17/moberries/static/css/main.433b6323.css",
-    "main.js": "/mayluv17/moberries/static/js/main.f2b77267.js",
+    "main.css": "/mayluv17/moberries/static/css/main.5c043b53.css",
+    "main.js": "/mayluv17/moberries/static/js/main.a7d192bb.js",
     "static/js/787.af175191.chunk.js": "/mayluv17/moberries/static/js/787.af175191.chunk.js",
     "index.html": "/mayluv17/moberries/index.html",
-    "main.433b6323.css.map": "/mayluv17/moberries/static/css/main.433b6323.css.map",
-    "main.f2b77267.js.map": "/mayluv17/moberries/static/js/main.f2b77267.js.map",
+    "main.5c043b53.css.map": "/mayluv17/moberries/static/css/main.5c043b53.css.map",
+    "main.a7d192bb.js.map": "/mayluv17/moberries/static/js/main.a7d192bb.js.map",
     "787.af175191.chunk.js.map": "/mayluv17/moberries/static/js/787.af175191.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.433b6323.css",
-    "static/js/main.f2b77267.js"
+    "static/css/main.5c043b53.css",
+    "static/js/main.a7d192bb.js"
   ]
 }
