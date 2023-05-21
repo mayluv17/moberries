@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mayluv17/moberries/static/css/main.5c043b53.css",
-    "main.js": "/mayluv17/moberries/static/js/main.a7d192bb.js",
-    "static/js/787.af175191.chunk.js": "/mayluv17/moberries/static/js/787.af175191.chunk.js",
-    "index.html": "/mayluv17/moberries/index.html",
-    "main.5c043b53.css.map": "/mayluv17/moberries/static/css/main.5c043b53.css.map",
-    "main.a7d192bb.js.map": "/mayluv17/moberries/static/js/main.a7d192bb.js.map",
-    "787.af175191.chunk.js.map": "/mayluv17/moberries/static/js/787.af175191.chunk.js.map"
+    "main.css": "/moberries/static/css/main.5c043b53.css",
+    "main.js": "/moberries/static/js/main.8eddea06.js",
+    "static/js/787.af175191.chunk.js": "/moberries/static/js/787.af175191.chunk.js",
+    "index.html": "/moberries/index.html",
+    "main.5c043b53.css.map": "/moberries/static/css/main.5c043b53.css.map",
+    "main.8eddea06.js.map": "/moberries/static/js/main.8eddea06.js.map",
+    "787.af175191.chunk.js.map": "/moberries/static/js/787.af175191.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5c043b53.css",
-    "static/js/main.a7d192bb.js"
+    "static/js/main.8eddea06.js"
   ]
 }
