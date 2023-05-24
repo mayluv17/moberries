@@ -11,6 +11,7 @@ const Home: React.FC = (): ReactElement => {
     email: "",
     status: "ACTIVE",
   };
+
   const [data, setData] = useState<clientsType[]>(clientsData);
   const [toggleForm, setToggleForm] = useState<boolean>(false);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
@@ -18,6 +19,10 @@ const Home: React.FC = (): ReactElement => {
   const [editInput, setEditInput] = useState<clientsType>(defaultData);
   const [searchInput, setSearchInput] = useState("");
   const [currentData, setCurrentData] = useState<clientsType[]>(clientsData);
+  const [fliterSortInput, setFilterSortInput] = useState({
+    filterBy: "none",
+    sortBy: "none",
+  });
 
   const toggleEditor = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -42,11 +47,13 @@ const Home: React.FC = (): ReactElement => {
 
   const handleFormSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (toggleForm && !isNewUser) {
-      submitEditedClient();
-    }
-    if (toggleForm && isNewUser) {
+
+    if (!toggleForm) return;
+
+    if (isNewUser) {
       submitNewClient();
+    } else {
+      submitEditedClient();
     }
   };
 
@@ -60,87 +67,114 @@ const Home: React.FC = (): ReactElement => {
     const filterCurrentData: clientsType[] = data.filter(
       (client) => client.id !== userEditId
     );
+
     setData([...filterCurrentData, editInput]);
     setCurrentData([...filterCurrentData, editInput]);
     setToggleForm(false);
+    resetFilteredSortInput();
   };
 
   const submitNewClient = () => {
     const userId = Math.floor(Math.random() * 1000);
+
     setData([...data, { ...editInput, id: userId }]);
     setCurrentData([...data, { ...editInput, id: userId }]);
     setIsNewUser(false);
     setToggleForm(false);
+    resetFilteredSortInput();
   };
 
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    const searchQuery = e.target.value;
-    setSearchInput(searchQuery);
+  const resetFilteredSortInput = () => {
+    setFilterSortInput({
+      filterBy: "none",
+      sortBy: "none",
+    });
+  };
 
-    if (searchQuery === "") return setCurrentData(data);
+  const search = (data: clientsType[], searchQuery: string) => {
+    if (searchQuery === "") return data;
 
-    //validate email
-    if (!searchQuery.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)) return;
+    if (!searchQuery.match(/^\S+@\S+\.\S+$/)) return;
 
     const searchResult: clientsType | undefined = data.find(
       (client) => client.email === searchQuery
     );
 
+    return searchResult !== undefined ? [searchResult] : [];
+  };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchQuery = e.target.value;
+    setSearchInput(searchQuery);
+    const searchResult = search(data, searchQuery);
+
     if (searchResult !== undefined) {
-      setCurrentData([searchResult]);
-    } else {
-      setCurrentData([]);
+      setCurrentData(searchResult);
     }
+  };
+
+  const filterClient = (status: string, data: clientsType[]) => {
+    return status === "none"
+      ? data
+      : data.filter((result) => result.status === status);
   };
 
   const handleFilterResult = (e: ChangeEvent<HTMLSelectElement>) => {
     const status = e.currentTarget.value;
-    if (status === "none") {
-      setCurrentData(data);
-    } else {
-      const filteredData = data.filter((result) => result.status === status);
-      setCurrentData(filteredData);
-    }
+
+    setFilterSortInput({ ...fliterSortInput, filterBy: status });
+
+    const filteredData = filterClient(status, data);
+    setCurrentData(filteredData);
+  };
+
+  const sortData = (sortBy: string, data: clientsType[]) => {
+    if (sortBy === "none") return data;
+
+    return sortBy === "z-a"
+      ? data.sort(function (a, b) {
+          return a.name
+            .toLocaleLowerCase()
+            .localeCompare(b.name.toLocaleLowerCase());
+        })
+      : data.sort(function (a, b) {
+          return b.name
+            .toLocaleLowerCase()
+            .localeCompare(a.name.toLocaleLowerCase());
+        });
   };
 
   const handleSort = (e: ChangeEvent<HTMLSelectElement>) => {
     const sortBy = e.currentTarget.value;
 
-    if (sortBy === "none") return setCurrentData(data);
+    setFilterSortInput({ ...fliterSortInput, sortBy: sortBy });
 
-    const existing = [...currentData];
-    let sortedData: clientsType[] = [];
-
-    if (sortBy === "a-z") {
-      sortedData = existing.sort(function (a, b) {
-        return a.name
-          .toLocaleLowerCase()
-          .localeCompare(b.name.toLocaleLowerCase());
-      });
-    }
-
-    if (sortBy === "z-a") {
-      sortedData = existing.sort(function (a, b) {
-        return b.name
-          .toLocaleLowerCase()
-          .localeCompare(a.name.toLocaleLowerCase());
-      });
-    }
+    const existingData = [...currentData];
+    const sortedData: clientsType[] = sortData(sortBy, existingData);
+    console.log(sortedData);
     setCurrentData(sortedData);
   };
 
   return (
     <div className="App">
       <label htmlFor="filter"> Filter by:</label>
-      <select name="filter" onChange={(e) => handleFilterResult(e)}>
+      <select
+        value={fliterSortInput.filterBy}
+        name="filterBy"
+        onChange={(e) => handleFilterResult(e)}
+      >
         <option>none</option>
         <option>ACTIVE</option>
         <option>PENDING</option>
-        <option>BLOCK</option>
+        <option>BLOCKED</option>
       </select>
 
       <label htmlFor="sort"> Sort by:</label>
-      <select name="sort" onChange={(e) => handleSort(e)}>
+      <select
+        value={fliterSortInput.sortBy}
+        name="sortBy"
+        onChange={(e) => handleSort(e)}
+      >
         <option value="none">none</option>
         <option value="a-z">A to Z</option>
         <option value="z-a">Z to A</option>
@@ -176,7 +210,7 @@ const Home: React.FC = (): ReactElement => {
               name="email"
               value={editInput?.email}
               onChange={(e) => handleForm(e)}
-              type="text"
+              type="email"
             ></input>
             <label htmlFor="birthday"> Birthday </label>
             <input
