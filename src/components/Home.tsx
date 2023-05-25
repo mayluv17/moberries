@@ -2,6 +2,8 @@ import { useState, MouseEvent, ChangeEvent, ReactElement } from "react";
 import { clientsData } from "../data/data";
 import { clientsType } from "../types/clientProps";
 import Client from "../components/Client";
+import SearchAndFilter from "./SearchAndfFilter";
+import { Form } from "./Form";
 
 const Home: React.FC = (): ReactElement => {
   const defaultData: clientsType = {
@@ -151,93 +153,28 @@ const Home: React.FC = (): ReactElement => {
 
     const existingData = [...currentData];
     const sortedData: clientsType[] = sortData(sortBy, existingData);
-    console.log(sortedData);
     setCurrentData(sortedData);
   };
 
   return (
     <div className="App">
-      <label htmlFor="filter"> Filter by:</label>
-      <select
-        value={fliterSortInput.filterBy}
-        name="filterBy"
-        onChange={(e) => handleFilterResult(e)}
-      >
-        <option>none</option>
-        <option>ACTIVE</option>
-        <option>PENDING</option>
-        <option>BLOCKED</option>
-      </select>
+      <SearchAndFilter
+        handleSearch={(e) => handleSearch(e)}
+        searchInput={searchInput}
+        handleSort={(e) => handleSort(e)}
+        handleFilterResult={(e) => handleFilterResult(e)}
+        fliterSortInput={fliterSortInput}
+      />
 
-      <label htmlFor="sort"> Sort by:</label>
-      <select
-        value={fliterSortInput.sortBy}
-        name="sortBy"
-        onChange={(e) => handleSort(e)}
-      >
-        <option value="none">none</option>
-        <option value="a-z">A to Z</option>
-        <option value="z-a">Z to A</option>
-      </select>
       <Client data={currentData} toggleEditor={toggleEditor} />
-      <br />
       <button onClick={handleAddNewClient}>Add user</button>
       <hr />
-      <input
-        placeholder="search Client"
-        type="search"
-        onChange={handleSearch}
-        value={searchInput}
-      />
-      <hr />
-
       {toggleForm && (
-        <div>
-          <form>
-            <label htmlFor="name"> Name </label>
-            <input
-              id="name"
-              name="name"
-              value={editInput?.name}
-              onChange={(e) => handleForm(e)}
-              type="text"
-            ></input>
-            <br />
-            <br />
-            <label htmlFor="email"> Email </label>
-            <input
-              id="email"
-              name="email"
-              value={editInput?.email}
-              onChange={(e) => handleForm(e)}
-              type="email"
-            ></input>
-            <label htmlFor="birthday"> Birthday </label>
-            <input
-              id="birthday"
-              name="date"
-              value={editInput?.date}
-              onChange={(e) => handleForm(e)}
-              type="date"
-            ></input>
-            <br />
-            <br />
-            <label htmlFor="status"> Status </label>
-            <select
-              id="status"
-              name="status"
-              value={editInput?.status}
-              onChange={(e) => handleForm(e)}
-            >
-              <option value={"ACTIVE"}>ACTIVE</option>
-              <option value={"PENDING"}>PENDING</option>
-              <option value={"BLOCKED"}>BLOCKED</option>
-            </select>
-            <br />
-            <br />
-            <button onClick={handleFormSubmit}>Save</button>
-          </form>
-        </div>
+        <Form
+          editInput={editInput}
+          handleForm={(e) => handleForm(e)}
+          handleFormSubmit={(e) => handleFormSubmit(e)}
+        />
       )}
     </div>
   );

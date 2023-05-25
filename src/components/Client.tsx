@@ -17,6 +17,7 @@ const Client: React.FC<clientProp> = ({ data, toggleEditor }): ReactElement => {
             <th>Name</th>
             <th>Email</th>
             <th>Status</th>
+            <th>Birthday</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -32,6 +33,7 @@ const Client: React.FC<clientProp> = ({ data, toggleEditor }): ReactElement => {
                 <td>{client.name}</td>
                 <td>{client.email}</td>
                 <td>{client.status}</td>
+                <td>{client.date}</td>
                 <td>
                   <button
                     data-userid={client.id}
